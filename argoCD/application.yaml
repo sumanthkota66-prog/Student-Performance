@@ -7,7 +7,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/e-sweeney/Student-Performance.git
+    repoURL: https://github.com/sumanthkota66-prog/Student-Performance
     targetRevision: main
     path: k8s   
   destination:

@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: flask-app-es
+  name: sumanth13ee
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: flask-app-es
+      app: sumanth13ee 
   template:
     metadata:
       labels:
-        app: flask-app-es
+        app: sumanth13ee 
     spec:
       containers:
         - name: flask-app-es
-          image: edwinasweeney/studentperformance:latest
+          image: sumanth1204/student1227:latest
           ports:
             - containerPort: 5000
