@@ -47,3 +47,45 @@ jobs:
           file: ./app/Dockerfile
           push: true
           tags: |
+            ${{ secrets.DOCKER_HUB_USERNAME }}/student:latest
+            ${{ secrets.DOCKER_HUB_USERNAME }}/student:${{ steps.image_tag.outputs.image_tag }}
+
+  deploy-to-argocd:
+    runs-on: self-hosted
+    name: Deploy to Argo CD
+    needs: build-and-push
+
+    permissions:
+      contents: write
+
+    env:
+      KUBECONFIG: /home/docker/.kube/config
+
+    steps:
+      - name: 1. Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 2. Check Kubernetes Connection
+        run: |
+          echo "Runner user: $(whoami)"
+          echo "Kubeconfig: ${KUBECONFIG}"
+
+          test -f "${KUBECONFIG}" || {
+            echo "ERROR: ${KUBECONFIG} does not exist"
+            exit 1
+          }
+
+          kubectl config use-context kind-three-node-cluster
+          kubectl cluster-info
+          kubectl get nodes
+
+      - name: 3. Apply Argo CD Application
+        run: |
+          kubectl apply -f argoCD/application.yaml
+
+      - name: 4. Check Resources
+        run: |
+          kubectl get applications -n argocd
+          kubectl get deployments
+          kubectl get services
+          kubectl get nodes -o wide
